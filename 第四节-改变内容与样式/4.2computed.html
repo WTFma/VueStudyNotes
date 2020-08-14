@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p>不使用计算属性获取的时间会变化：{{getCurrentTime()}}</p>
+        <p>使用计算属性获取的时间不再变化：{{saveCurrentTime}}</p>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {},
+            methods: {
+                //获取当前时间
+                getCurrentTime() {
+                    var now = new Date(),
+                        y = now.getFullYear(),
+                        m = now.getMonth() + 1,
+                        d = now.getDate();
+                    var localTime = y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
+                    //每点击一次，时间也随之变化，因为相当于每次点击都要重新执行一遍方法
+                    console.log('未使用计算属性' + localTime);
+                }
+            },
+            computed: {
+                //当我们需要的数据很少进行更改或者很少反复调用，可以选择用computed来将其属性化保存
+                saveCurrentTime() {
+                    var now = new Date();
+                    //就算多次点击，打印的时间也不会发生改变
+                    return now
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>

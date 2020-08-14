@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p>OverWatch的当前售价为：{{price}}￥。</p>
+        你期望的售价是<input type="text" v-model="price">
+        <div v-if="isTrue">这是有可能的哦~</div>
+        <div v-else>你在做梦吗？</div>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                price: 198,
+                isTrue: true
+            },
+            methods: {},
+            watch: {
+                price: function(newPrice, oldPrice) {
+                    newPrice > 100 ? this.isTrue = true : this.isTrue = false
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>

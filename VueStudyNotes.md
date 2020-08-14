@@ -305,3 +305,95 @@ $\color{#ee6600}{知识扩展}$：
     });
 </script>
 ```
+## 第四节：Vue改变内容→虚拟dom和diff算法
+### 1.插值表达式的方式
+```
+<div id="app">
+    <!-- 通过插值表达式来获取值，通过事件改变值 -->
+    {{count}}
+    <button @click="addCount(2)">Add</button>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            count: 0
+        },
+        methods: {
+            addCount(step) {
+                this.count += step;
+            }
+        }
+    });
+</script>
+```
+### 2.计算属性：```computed```
+#### Ⅰ.什么是计算属性？
+**字面理解**：首先它是属性，即vue这个对象的一个属性，然后拥有计算的能力.
+简单来说，计算属性就是一个能$\color{0066ee}{将计算结果缓存起来的}$```属性```（将行为转换为了静态的属性）。
+#### Ⅱ.计算属性与方法的区别
+```
+<div id="app">
+    <p>不使用计算属性获取的时间会变化：{{getCurrentTime()}}</p>
+    <p>使用计算属性获取的时间不再变化：{{saveCurrentTime}}</p>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {
+            //获取当前时间
+            getCurrentTime() {
+                var now = new Date(),
+                    y = now.getFullYear(),
+                    m = now.getMonth() + 1,
+                    d = now.getDate();
+                var localTime = y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
+                //每点击一次，时间也随之变化，因为相当于每次点击都要重新执行一遍方法
+                console.log('未使用计算属性' + localTime);
+            }
+        },
+        computed: {
+            //当我们需要的数据很少进行更改或者很少反复调用，可以选择用computed来将其属性化保存
+            saveCurrentTime() {
+                var now = new Date();
+                //就算多次点击，打印的时间也不会发生改变
+                return now
+            }
+        },
+    });
+</script>
+```
+- 执行结果
+![计算属性使用情况](/第四节-改变内容与样式/images/4.2计算属性结果.PNG)
+
+#### Ⅲ.结论
+调用方法时，每次都需要重新计算，既然有计算过程则必然产生开销，如果结果不经常变化，就可以考虑将结果缓存起来，采用计算属性可以很方便做到这一点；**计算属性的主要特点就是为了将不经常变化的计算结果进行缓存，以节约我们的系统开销**。
+$\color{#ee6600}{注意：}$computed里虽然存放的是函数。但在调用时，computed里的东西是一个属性，所以调用时不能使用'()',因为'()'是在调用函数，而不是调用属性。
+### 3.watch：监控属性
+```watch```用于监控参数变化，并调用函数，newVal是能获得参数新的值，oldVal是参数老的值。
+>- 通过watch里给属性绑定函数，当属性值变化，该函数就会自动被调用。调用时可以接收新旧两个参数。
+
+```
+<div id="app">
+    <p>OverWatch的当前售价为：{{price}}￥。</p>
+    你期望的售价是<input type="text" v-model="price">
+    <div v-if="isTrue">这是有可能的哦~</div>
+    <div v-else>你在做梦吗？</div>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            price: 198,
+            isTrue: true
+        },
+        methods: {},
+        watch: {
+            price: function(newPrice, oldPrice) {
+                newPrice > 100 ? this.isTrue = true : this.isTrue = false
+            }
+        },
+    });
+</script>
+```
