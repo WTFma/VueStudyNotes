@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div style="background-color: aquamarine;" v-on:mousemove="GetXY">
+            鼠标在颜色区域移动的时候触发,当前x坐标为：{{x}}，y坐标为：{{y}}
+            <span style="background-color:coral;width: 100px;" v-on:mousemove="MoveStop">方法一：鼠标至此停止mousemove事件</span>
+            <span style="background-color:chartreuse;width: 100px;" @mousemove.stop>方法二：鼠标至此停止mousemove事件</span>
+        </div>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                x: 0,
+                y: 0
+            },
+            methods: {
+                //获取当前鼠标所处的坐标
+                GetXY(event) {
+                    this.x = event.clientX;
+                    this.y = event.clientY;
+                    console.log(event);
+                },
+                //停止鼠标移动事件
+                MoveStop(event) {
+                    event.stopPropagation();
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

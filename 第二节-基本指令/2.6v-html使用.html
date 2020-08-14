@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <span v-html="myLink"></span>
+        <br>
+        <span v-text="myText"></span>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                myLink: '<a href="http://www.bing.com">跳转至bing</a>',
+                myText: '<a href="http://www.bing.com">渲染的文本</a>'
+            },
+            methods: {}
+        });
+    </script>
+</body>
+
+</html>

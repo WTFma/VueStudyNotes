@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 这样的写法会导致每键入一次，就调用一次事件 -->
+        <input type="text" @keyup="EnterOver">
+        <!-- 按键修饰符的使用保证输入完毕按下回车才调用事件 -->
+        <input type="text" @keyup.enter="EnterOver">
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {},
+            methods: {
+                EnterOver() {
+                    alert('输入完毕')
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

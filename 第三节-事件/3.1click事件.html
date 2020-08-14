@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        {{count}}
+        <button @click="addCount">Add</button>
+        <button @click="redCount">Reduce</button>
+        <input type="text" v-model="step"> {{count>10?'大于10':'小于10'}}
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                count: 0,
+                step: 1
+            },
+            methods: {
+                addCount: function() {
+                    var mystep = (Number)(this.step); //做一步转换，不然被当做是拼接字符串
+                    //this.count += this.step;
+                    this.count += mystep;
+                }, //根据input的输入增加相应的值
+                redCount: function() {
+                    this.count -= this.step;
+                }
+
+            }
+        });
+    </script>
+</body>
+
+</html>
