@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p>控制台查看本机位置信息</p>
+        <button @click="GetLocation">获取</button>
+    </div>
+    <script>
+        // 我的开发者key=BPKBZ-UCICO-KTLWG-SP4TL-DF7TE-TMFDJ
+        // https://apis.map.qq.com/ws/location/v1/ip?ip=61.135.17.68&key=BPKBZ-UCICO-KTLWG-SP4TL-DF7TE-TMFDJ
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                info: ''
+            },
+            methods: {
+                GetLocation() {
+                    console.log(this.info)
+                }
+            },
+            mounted() {
+                axios
+                //这里会出错，因为访问api必须通过服务器进行，我们的demo是直接打开html格式文件，其实并没有架设本地服务器
+                    .get('https://apis.map.qq.com/ws/location/v1/ip?ip=61.135.17.686&key=BPKBZ-UCICO-KTLWG-SP4TL-DF7TE-TMFDJ')
+                    .then(response => (this.info = response))
+                    .catch(function(error) { // 请求失败处理
+                        console.log(error);
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>

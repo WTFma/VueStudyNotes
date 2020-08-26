@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 遍历人员信息且将人员信息传递给子组件 -->
+        <component-a v-for="(person,index) in persons" :person="person" :index="index"></component-a>
+    </div>
+    <script>
+        Vue.component('component-a', {
+            props: { //使用props类型限制可以很好杜绝一些非法的值
+                person: {
+                    type: Object
+                },
+                index: {
+                    type: Number
+                }
+            },
+            data() {
+                return {
+                    //对接收到的值进行一些简单处理
+                    comPerson: this.person,
+                    comIndex: this.index
+                }
+            },
+            template: `
+            <div>
+                <ul>The Person info of number {{comIndex+1}} is 
+                    <li>Name===>{{comPerson.name}}</li>
+                    <li>Age===>{{comPerson.age}}</li>
+                </ul>
+            <div>
+            ` //template中直接写的话需要使用“ `` ”对html元素进行包裹。
+        })
+
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                persons: [{
+                    name: 'Ma',
+                    age: 23,
+                    tel: '15088888999'
+                }, {
+                    name: 'Zhang',
+                    age: 23,
+                    tel: '18888888888'
+                }]
+            },
+            methods: {}
+        });
+    </script>
+</body>
+
+</html>

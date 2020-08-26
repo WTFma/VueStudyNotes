@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <style>
+        .myColor {
+            color: crimson;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        红色为偶数
+        <ul>
+            <li v-for="num in nums"><span :class="[num%2==0?'myColor':null]">{{num}}</span></li>
+        </ul>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                nums: [55, 66, 77, 88, 99],
+            },
+            methods: {},
+        });
+    </script>
+</body>
+
+</html>

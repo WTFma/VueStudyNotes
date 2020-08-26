@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <style>
+        .myColor {
+            color: crimson;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <table>
+            <thead>
+                <tr>
+                    <th>姓名</th>
+                    <th>年龄</th>
+                    <th>电话</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ④使用组件 -->
+                <tr is="tabcontent" v-for="user in users" :u="user"></tr>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- ③以template的方式书写使用 -->
+    <template id="temp-table-content">
+        <tr>
+            <td>{{u.name}}</td>
+            <td :class="[u.age>20?'myColor':null]">{{u.age}}</td> 
+            <td>{{u.tel}}</td>
+            <td>
+                <button @click="SayHi(u.name)">说话</button>
+            </td>          
+        </tr>
+    </template>
+    <script>
+        //①定义组件及其逻辑
+        Vue.component('tabcontent', {
+            props: ['u'],
+            methods: {
+                SayHi(name) {
+                    alert("你好" + name)
+                }
+            },
+            //②定位要渲染的html
+            template: '#temp-table-content'
+        });
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                //虚拟数据
+                users: [{
+                    name: 'Tim',
+                    age: 29,
+                    tel: '1888888888'
+                }, {
+                    name: 'Nano',
+                    age: 26,
+                    tel: '1777777777'
+                }, {
+                    name: 'Aluoha',
+                    age: 18,
+                    tel: '1666666666'
+                }]
+            },
+        });
+    </script>
+
+</body>
+
+
+</html>

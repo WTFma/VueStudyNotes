@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <style>
+        .mydiv {
+            width: 400px;
+            height: 220px;
+            background-color: #ee66ee;
+        }
+        
+        .red {
+            background-color: red;
+        }
+        
+        .myWidth {
+            width: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div :class="[useWidth,useRed]" class="mydiv">多样式绑定</div>
+        <!-- 注意：针对使用v-bind绑定的样式不能这样写 -->
+        <!-- <div :class="useWidth" :class="useRed"></div> -->
+
+        <hr>
+        <!-- 通过style设置样式 -->
+        <!-- 注意：style引用了vue中的内容，因此是一个键值对，所以需要大括号，json格式。json格式内部不允许使用“-”，所以对象的键要注意 -->
+        <div :style="{backgroundColor:bc}" class="mydiv">通过style设置样式</div>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                useWidth: 'myWidth',
+                useRed: 'red',
+                bc: 'blue'
+
+            },
+            methods: {}
+        });
+    </script>
+</body>
+
+</html>

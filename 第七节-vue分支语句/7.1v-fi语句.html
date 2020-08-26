@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+
+        <p>你期待今年的NBA总决赛吗？？</p>
+        <button @click="DreamTrue"> 当然</button>
+        <button @click="DreamFalse"> 并不</button>
+        <div v-if="isDiscont">恭喜获得前往现场观看NBA的门票！</div>
+        <div v-else>抱歉，或许你对其他体育赛事感兴趣。</div>
+        <hr>
+        <div v-show="isInterest">对NBA感兴趣~</div>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                isDiscont: false,
+                isInterest: true
+            },
+            methods: {
+                DreamTrue() {
+                    this.isDiscont = true;
+                },
+                DreamFalse() {
+                    this.isDiscont = false;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

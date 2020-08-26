@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>vue的生命周期钩子函数详解</title>
+</head>
+
+<body>
+    <div id="app">
+        <p>{{ message }}</p>
+        <button @click="Change">点击观察</button>
+        <p v-if="embodimentOfDiff">再次点击你会发现控制台不会改变，也一定程度体现了vue的diff算法</p>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <script type="text/javascript">
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: '这个vue生命周期钩子函数讲解的很棒,通俗易懂,值得关注,收藏 ',
+                embodimentOfDiff: false
+
+            },
+            methods: {
+                Change() {
+                    this.message = "原有的message已经被改变了",
+                        this.embodimentOfDiff = true
+                }
+            },
+            beforeCreate: function() {
+                console.group('beforeCreate 创建前状态===============》');
+                console.log("%c%s", "color:red", "el     : " + this.$el); //undefined
+                console.log("%c%s", "color:red", "data   : " + this.$data); //undefined 
+                console.log("%c%s", "color:red", "message: " + this.message)
+            },
+            created: function() {
+                console.group('created 创建完毕状态===============》');
+                console.log("%c%s", "color:red", "el     : " + this.$el); //undefined
+                console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化 
+                console.log("%c%s", "color:red", "message: " + this.message); //已被初始化
+            },
+            beforeMount: function() {
+                console.group('beforeMount 挂载前状态===============》');
+                console.log("%c%s", "color:red", "el     : " + (this.$el)); //已被初始化
+                console.log(this.$el);
+                console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化  
+                console.log("%c%s", "color:red", "message: " + this.message); //已被初始化  
+            },
+            mounted: function() {
+                console.group('mounted 挂载结束状态===============》');
+                console.log("%c%s", "color:red", "el     : " + this.$el); //已被初始化
+                console.log(this.$el);
+                console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化
+                console.log("%c%s", "color:red", "message: " + this.message); //已被初始化 
+            },
+            beforeUpdate: function() {
+                console.group('beforeUpdate 更新前状态===============》');
+                console.log("%c%s", "color:red", "el     : " + this.$el);
+                console.log(this.$el);
+                console.log("%c%s", "color:red", "data   : " + this.$data);
+                console.log("%c%s", "color:red", "message: " + this.message);
+            },
+            updated: function() {
+                console.group('updated 更新完成状态===============》');
+                console.log("%c%s", "color:red", "el     : " + this.$el);
+                console.log(this.$el);
+                console.log("%c%s", "color:red", "data   : " + this.$data);
+                console.log("%c%s", "color:red", "message: " + this.message);
+            },
+            beforeDestroy: function() {
+                console.group('beforeDestroy 销毁前状态===============》');
+                console.log("%c%s", "color:red", "el     : " + this.$el);
+                console.log(this.$el);
+                console.log("%c%s", "color:red", "data   : " + this.$data);
+                console.log("%c%s", "color:red", "message: " + this.message);
+            },
+            destroyed: function() {
+                console.group('destroyed 销毁完成状态===============》');
+                console.log("%c%s", "color:red", "el     : " + this.$el);
+                console.log(this.$el);
+                console.log("%c%s", "color:red", "data   : " + this.$data);
+                console.log("%c%s", "color:red", "message: " + this.message)
+            }
+        })
+    </script>
+</body>
+
+</html>

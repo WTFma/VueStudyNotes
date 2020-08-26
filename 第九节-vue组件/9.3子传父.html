@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <p>父组件的值：{{fatherInfo}}</p>
+        <!-- ③父组件监听回调且执行对应的事件，该事件自带参数，参数值就是子组件传上来的值 -->
+
+        <!-- 使用函数处理回调 -->
+        <gou-wu-che @aluha="GetInfo"></gou-wu-che>
+        <!-- 直接将子值赋值给父值 -->
+        <gou-wu-che @aluha="fatherInfo=$event"></gou-wu-che>
+
+    </div>
+
+    <template id="GWC">
+        <div>
+            {{CCInfo}}
+            <!-- ①在子组件中定义发送事件 -->
+            <button @click="SendMoney(CCInfo)">click</button>
+        </div>
+    </template>
+    <script>
+        Vue.component('gou-wu-che', {
+            data() {
+                return {
+                    CCInfo: 99
+                }
+            },
+            methods: {
+                //②使用this.emit()准备将数据向上传递
+                //第一个参数是父组件监听的回调函数名称（最好要小写，大写容易抽风）,第二个参数是要传递的值
+                SendMoney(child_info) {
+                    this.$emit("aluha", child_info)
+                }
+            },
+            template: '#GWC',
+
+        })
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                fatherInfo: 0
+            },
+            methods: {
+                //④父组件执行
+                GetInfo: function(data) {
+                    alert("xx的价格为：" + data + "＄")
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

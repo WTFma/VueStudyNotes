@@ -71,6 +71,7 @@ Vue是一个$\color{#0066ee}{渐进式}$的js框架。更多的注重视图层�
 
 ### 1.插值表达式
 插值表达式使用在html中被绑定的元素中的。目的是通过插值表达式从Vue实例中获取vue对象的属性（```data```）和方法（```method```）
+插值表达式获取Vue对象的中的属性值来自于data、computed、props
 
 ```
 new Vue({
@@ -327,6 +328,7 @@ $\color{#ee6600}{知识扩展}$：
     });
 </script>
 ```
+
 ### 2.计算属性：```computed```
 #### Ⅰ.什么是计算属性？
 **字面理解**：首先它是属性，即vue这个对象的一个属性，然后拥有计算的能力.
@@ -394,6 +396,651 @@ $\color{#ee6600}{注意：}$computed里虽然存放的是函数。但在调用�
                 newPrice > 100 ? this.isTrue = true : this.isTrue = false
             }
         },
+    });
+</script>
+```
+
+## 第五节：vue改变样式
+### 1.class的动态绑定
+通过给html元素的class属性绑定vue中的属性值，得到样式的动态绑定
+```
+<style>
+    .mydiv {
+        width: 400px;
+        height: 220px;
+        background-color: #ee66ee;
+    }
+    
+    .red {
+        background-color: red;
+    }
+    
+    .green {
+        background-color: green;
+    }
+</style>
+<div id="app">
+    <!-- 如果isShow为真 则class="red"否则class不做绑定 -->
+    <div class="mydiv" :class="{red:isShow}"></div>
+    <button @click="changeColor">点击变红</button>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            isShow: false
+        },
+        methods: {
+            changeColor() {
+                this.isShow = !this.isShow
+            }
+        }
+    });
+</script>
+```
+
+### 2.通过computed绑定
+通过computed返回一个对象，对象里面存放着多个键值对。
+```
+<style>
+    .mydiv {
+        width: 400px;
+        height: 220px;
+        background-color: #ee66ee;
+    }       
+    .red {
+        background-color: red;
+   }        
+    .myWidth {
+        width: 500px;
+    }
+</style>
+<div id="app">
+    <!-- 如果isShow为真 则class="red"否则class不做绑定 -->
+    <div class="mydiv" :class="{red:isShow}"></div>
+    <button @click="changeColor">点击变红</button>
+    <hr>
+    <!-- 通过计算属性绑定所需的对象给class -->
+    <div class="mydiv" :class="changeWC"></div>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            isShow: false
+        },
+        methods: {
+            changeColor() {
+                this.isShow = !this.isShow
+            }
+        },
+        computed: {
+            changeWC() {
+                return {
+                    red: this.isShow,
+                    myWidth: this.isShow
+                }
+            }
+        },
+    });
+</script>
+```
+
+### 3.多个样式绑定及style绑定
+设置div的style属性的值，style里放json对象，键是驼峰命名法，值是对应的样式。比如:“:style={backgroundColor:'对应的data'}”
+```
+<style>
+    .mydiv {
+        width: 400px;
+        height: 220px;
+        background-color: #ee66ee;
+    }
+    
+    .red {
+        background-color: red;
+    }
+    
+    .myWidth {
+        width: 500px;
+    }
+</style>
+<div id="app">
+    <div :class="[useWidth,useRed]" class="mydiv">多样式绑定</div>
+    <!-- 注意：针对使用v-bind绑定的样式不能这样写 -->
+    <!-- <div :class="useWidth" :class="useRed"></div> -->
+
+    <hr>
+    <!-- 通过style设置样式 -->
+    <!-- 注意：style引用了vue中的内容，因此是一个键值对，所以需要大括号，json格式。json格式内部不允许使用“-”，所以对象的键要注意 -->
+    <div :style="{backgroundColor:bc}" class="mydiv">通过style设置样式</div>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            useWidth: 'myWidth',
+            useRed: 'red',
+            bc: 'blue'
+
+        },
+        methods: {}
+    });
+</script>
+```
+
+### 4.结合computed在style里使用多个样式的数组
+一个绑定改变多个样式需要使用数组“[ ]”进行
+```
+<style>
+    .mydiv {
+        height: 200px;
+        background-color: aqua;
+    }
+</style>
+<div id="app">
+    <!-- comWidth使用的是computed绑定，另外使用的是一般的style对象绑定 -->
+    <div :style="[comWidth,{backgroundColor:newColor}]" class="mydiv"></div>
+    <hr> 改变宽度<input type="text" v-model="daWidth">(自动添加px单位)
+    <hr> 改变颜色
+    <input type="text" v-model="newColor">
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            daWidth: 120,
+            newColor: '#0066ee'
+        },
+        methods: {
+            changeWidth() {
+                console.log(this.daWidth)
+            }
+        },
+        computed: {
+            comWidth: function() {
+                return {
+                    width: this.daWidth + 'px'
+                }
+            }
+        },
+    });
+</script>
+```
+
+## 第六节：Vue的核心，虚拟DOM和diff算法
+Vue高效的核心，就是虚拟的dom和diff算法，vue不通过修改dom来达到修改的效果，而是直接在页面上改那个元素，此时这个元素就是一个虚拟的dom。
+那vue如何修改呢？通过diff算法，计算出虚拟的dom修改前和修改后的区别，然后在虚拟的dom的原基础上修改，这样效率就很高了。
+
+## 第七节：Vue分支语句
+v-if:
+- 语法：v-if="vue-data（true）"。直接渲染新htnl元素
+
+v-else
+- v-if的对立面
+
+v-else-if
+-  是在else里面再嵌套一个if
+
+v-show
+- 控制html元素是否显示。效率高，因为只是在元素本身加了一个dispaly=none的属性。
+
+$\color{red}{注意：}$v-show不能作用于template及其子元素；而v-if可以。简单来说就是：v-if写在template上时，其本身和子元素都不会被渲染。v-show会渲染template其子元素。
+```
+<div id="app">
+    <p>你期待今年的NBA总决赛吗？？</p>
+    <button @click="DreamTrue"> 当然</button>
+    <button @click="DreamFalse"> 并不</button>
+    <div v-if="isDiscont">恭喜获得前往现场观看NBA的门票！</div>
+    <div v-else>抱歉，或许你对其他体育赛事感兴趣。</div>
+    <hr>
+    <div v-show="isInterest">对NBA感兴趣~</div>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            isDiscont: false,
+            isInterest: true
+        },
+        methods: {
+            DreamTrue() {
+                this.isDiscont = true;
+            },
+            DreamFalse() {
+                this.isDiscont = false;
+            }
+        }
+    });
+</script>
+```
+## 第八节：v-for
+### 一般用法
+```
+<style>
+    .myColor {
+        color: crimson;
+    }
+</style>
+<div id="app">
+    红色为偶数
+    <ul>
+        <li v-for="num in nums"><span :class="[num%2==0?'myColor':null]">{{num}}</span></li>
+    </ul>
+</div>
+<script>
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            nums: [55, 66, 77, 88, 99],
+        },
+        methods: {},
+    });
+</script>
+```
+### 和模板结合使用
+v-for在table中和template的组合使用：4定
+> 1. 定义组件及其逻辑
+> 2. 定位要渲染的html
+> 3. 定template的方式书写使用
+> 4. 定点使用组件
+```
+<style>
+    .myColor {
+        color: crimson;
+    }
+</style>
+<div id="app">
+    <table>
+        <thead>
+            <tr>
+                <th>姓名</th>
+                <th>年龄</th>
+                <th>电话</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ④使用组件 -->
+            <tr is="tabcontent" v-for="user in users" :u="user"></tr>
+        </tbody>
+    </table>
+
+</div>
+<!-- ③以template的方式书写使用 -->
+<template id="temp-table-content">
+    <tr>
+        <td>{{u.name}}</td>
+        <td :class="[u.age>20?'myColor':null]">{{u.age}}</td> 
+        <td>{{u.tel}}</td>
+        <td>
+            <button @click="SayHi(u.name)">说话</button>
+        </td>          
+    </tr>
+</template>
+<script>
+    //①定义组件及其逻辑
+    Vue.component('tabcontent', {
+        props: ['u'],
+        methods: {
+            SayHi(name) {
+                alert("你好" + name)
+            }
+        },
+        //②定位要渲染的html
+        template: '#temp-table-content'
+    });
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            //虚拟数据
+            users: [{
+                name: 'Tim',
+                age: 29,
+                tel: '1888888888'
+            }, {
+                name: 'Nano',
+                age: 26,
+                tel: '1777777777'
+            }, {
+                name: 'Aluoha',
+                age: 18,
+                tel: '1666666666'
+            }]
+        },
+    });
+</script>
+```
+
+## 第九节：组件
+**VUE很重要的一大特性就是组件化。** vue组件可以将vue对象作为一个组件，通过组件可以实现模块的复用，提高程序的灵活性，利于组织开发。
+### 1.组件注册
+#### 1-1.全局注册
+在被vue绑定了的html元素中才能使用组件。如果一个div没有被vue绑定，那么这个div不能使用之前注册的组件。
+```
+<div id="app">
+    <component-a></component-a>
+    <!-- 组件复用因为data是个函数有很好的隔离性 -->
+    <component-a></component-a>
+</div>
+<script>
+    Vue.component('component-a', {
+        data() {
+            return {
+                title: '组件A',
+                num: 0
+            }
+        },
+        methods: {
+            CountAdd() {
+                this.num += 1
+            }
+        },
+        template: `<div>
+            <p>hello{{title}}</p>
+            <button @click="CountAdd">num is {{num}}</button>
+        <div>` //template中直接写的话需要使用“ `` ”对html元素进行包裹。
+    })
+    var vm = new Vue({
+        el: '#app',
+        data: {},
+        methods: {}
+    });
+</script>
+```
+
+#### 1-2.局部注册
+
+Vue中的组件可以扩展HTML元素，用于封装可复用的代码，但是全局组件不需要挂载，但是不是很常用，尽量少在全局上使用组件，这样的话会影响浏览器的性能，而局部组件必须要手动挂载，不然会没有效果
+什么场景使用？如果不需要全局注册，或者是让组件使用在其它组件内，可以用选项对象的 components 属性实现局部注册。
+1. 以JavaScript 对象来定义组件
+ ```
+ var ComponentA = { /* ... */ }
+ var ComponentB = { /* ... */ }
+ ```
+2. 在 components 选项中定义你想要使用的组件
+```
+new Vue({
+  el: '#app',
+  components: {
+    'component-a': ComponentA,
+    'component-b': ComponentB
+  }
+})
+```
+
+### 2.组件传值
+#### prop
+prop类似一个传输介质，连接父子组件的通信，当然这个通信过程是单向的，就像瀑布，父组件的值会$\color{red}{单向传递}$给子组件，以供其使用。
+$\color{#ee6600}{知识扩展}$：单向传递是为了防止从子组件意外变更父级组件的状态，从而导致你的应用的数据流向难以理解。每次父级组件发生变更时，子组件中所有的 prop 都将会刷新为最新的值。所以不应该在一个子组件内部改变 prop。
+> prop的类型？归定props类型是有好处的，较强的类型毕竟还是好。
+> ```
+> props: {
+>  title: String,
+>  likes: Number,
+>  isPublished: Boolean,
+>  commentIds: Array,
+>  author: Object,
+>  callback: Function,
+>  contactsPromise: Promise // 或是任何其他的构造函数
+> }
+> ```
+**利用props进行组件的值传递。**
+```
+<div id="app">
+    <!-- 遍历人员信息且将人员信息传递给子组件 -->
+    <component-a v-for="(person,index) in persons" :person="person" :index="index"></component-a>
+</div>
+<script>
+    Vue.component('component-a', {
+        props: { //使用props类型限制可以很好杜绝一些非法的值
+            person: {
+                type: Object
+            },
+            index: {
+                type: Number
+            }
+        },
+        data() {
+            return {
+                //对接收到的值进行一些简单处理
+                comPerson: this.person,
+                comIndex: this.index
+            }
+        },
+        template: `
+        <div>
+            <ul>The Person info of number {{comIndex+1}} is 
+                <li>Name===>{{comPerson.name}}</li>
+                <li>Age===>{{comPerson.age}}</li>
+            </ul>
+        <div>
+        ` //template中直接写的话需要使用“ `` ”对html元素进行包裹。
+    })
+
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            persons: [{
+                name: 'Ma',
+                age: 23,
+                tel: '15088888999'
+            }, {
+                name: 'Zhang',
+                age: 23,
+                tel: '18888888888'
+            }]
+        },
+        methods: {}
+    });
+</script>
+```
+
+### 3.子传父
+> 四流程
+> 1. 子组件定义发送事件
+> 2. 使用$emit进行发送
+> 3. 父组件使用“@+emit定义的回调函数名称”监听回调函数，并且执行对应操作
+> 4. 父组件获取子组件值并且操作
+```
+<div id="app">
+    <p>父组件的值：{{fatherInfo}}</p>
+    <!-- ③父组件监听回调且执行对应的事件，该事件自带参数，参数值就是子组件传上来的值 -->
+
+    <!-- 使用函数处理回调 -->
+    <gou-wu-che @aluha="GetInfo"></gou-wu-che>
+    <!-- 直接将子值赋值给父值 -->
+    <gou-wu-che @aluha="fatherInfo=$event"></gou-wu-che>
+
+</div>
+
+<template id="GWC">
+    <div>
+        {{CCInfo}}
+        <!-- ①在子组件中定义发送事件 -->
+        <button @click="SendMoney(CCInfo)">click</button>
+    </div>
+</template>
+<script>
+    Vue.component('gou-wu-che', {
+        data() {
+            return {
+                CCInfo: 99
+            }
+        },
+        methods: {
+            //②使用this.emit()准备将数据向上传递
+            //第一个参数是父组件监听的回调函数名称（最好要小写，大写容易抽风）,第二个参数是要传递的值
+            SendMoney(child_info) {
+                this.$emit("aluha", child_info)
+            }
+        },
+        template: '#GWC',
+
+    })
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            fatherInfo: 0
+        },
+        methods: {
+            //④父组件执行
+            GetInfo: function(data) {
+                alert("xx的价格为：" + data + "＄")
+            }
+        }
+    });
+</script>
+```
+
+## 第十节：Vue的生命周期
+### 1.什么是vue生命周期？
+> Vue 实例从创建到销毁的过程，就是生命周期。也就是从开始创建、初始化数据、编译模板、挂载Dom→渲染、更新→渲染、卸载等一系列过程.
+ 
+### 2.vue生命周期的作用是什么？
+>vue的生命周期中有多个事件钩子，让我们在控制整个Vue实例的过程时更容易形成好的逻辑
+### 3.每个周期具体适合哪些场景？
+> - beforecreate : 可以在这加个loading事件，在加载实例时触发 
+> - created : 初始化完成时的事件写在这里，如在这结束loading事件，异步请求也适宜在这里调用.做一些数据初始化，实现函数自执行
+> - mounted : 挂载元素，获取到DOM节点,调用后台接口进行网络请求，拿回数据，配合路由钩子做一些事情。
+> - updated : 如果对数据统一处理，在这里写上相应函数 
+> - beforeDestroy : 可以做一个确认停止事件的确认框 
+> - nextTick : 更新数据后立即操作dom
+
+### 4.详解每个周期
+*原文出处：https://www.jianshu.com/p/672e967e201c*
+#### 4.1 beforeCreate( 创建前 )
+在实例初始化之后，数据观测和事件配置之前被调用，此时组件的选项对象还未创建，el 和 data 并未初始化，因此无法访问methods， data， computed等上的方法和数据
+#### 4.2 created ( 创建后 ）
+实例已经创建完成之后被调用，在这一步，实例已完成以下配置：数据观测、属性和方法的运算，watch/event事件回调，完成了data 数据的初始化，el没有.然而，挂在阶段还没有开始, \$el属性目前不可见，这是一个常用的生命周期，因为你可以调用methods中的方法，改变data中的数据，并且修改可以通过vue的响应式绑定体现在页面上，，获取computed中的计算属性等等，通常我们可以在这里对实例进行预处理，也有一些童鞋喜欢在这里发ajax请求，值得注意的是，这个周期中是没有什么方法来对实例化过程进行拦截的，因此假如有某些数据必须获取才允许进入页面的话，并不适合在这个方法发请求，建议在组件路由钩子beforeRouteEnter中完成.
+#### 4.3 beforeMount
+挂在开始之前被调用，相关的render函数首次被调用（虚拟DOM），实例已完成以下的配置： 编译模板，把data里面的数据和模板生成html，完成了el和data 初始化，注意此时还没有挂在html到页面上。
+
+#### 4.4 mounted
+挂载完成，也就是模板中的HTML渲染到HTML页面中，此时一般可以做一些ajax操作，mounted只会执行一次。
+
+#### 4.5 beforeUpdate
+在数据更新之前被调用，发生在虚拟DOM重新渲染和打补丁之前，可以在该钩子中进一步地更改状态，不会触发附加地重渲染过程
+#### 4.6 updated（更新后）
+在由于数据更改导致地虚拟DOM重新渲染和打补丁只会调用，调用时，组件DOM已经更新，所以可以执行依赖于DOM的操作，然后在大多是情况下，应该避免在此期间更改状态，因为这可能会导致更新无限循环，该钩子在服务器端渲染期间不被调用
+
+#### 4.7 beforeDestroy（销毁前）
+在实例销毁之前调用，实例仍然完全可用
+>1. 这一步还可以用this来获取实例，
+> 2. 一般在这一步做一些重置的操作，比如清除掉组件中的定时器 和 监听的dom事件
+
+#### 4.8 destroyed（销毁后）
+在实例销毁之后调用，调用后，所以的事件监听器会被移出，所有的子实例也会被销毁，该钩子在服务器端渲染期间不被调用
+
+### 5.code
+```
+<div id="app">
+    <p>{{ message }}</p>
+    <button @click="Change">点击观察</button>
+    <p v-if="embodimentOfDiff">再次点击你会发现控制台不会改变，也一定程度体现了vue的diff算法</p>
+</div>
+<script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: '这个vue生命周期钩子函数讲解的很棒,通俗易懂,值得关注,收藏 '
+        },
+        methods: {
+            Change() {
+                this.message = "原有的message已经被改变了",
+                this.embodimentOfDiff = true
+            }
+        },
+        beforeCreate: function() {
+            console.group('beforeCreate 创建前状态===============》');
+            console.log("%c%s", "color:red", "el     : " + this.$el); //undefined
+            console.log("%c%s", "color:red", "data   : " + this.$data); //undefined 
+            console.log("%c%s", "color:red", "message: " + this.message)
+        },
+        created: function() {
+            console.group('created 创建完毕状态===============》');
+            console.log("%c%s", "color:red", "el     : " + this.$el); //undefined
+            console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化 
+            console.log("%c%s", "color:red", "message: " + this.message); //已被初始化
+        },
+        beforeMount: function() {
+            console.group('beforeMount 挂载前状态===============》');
+            console.log("%c%s", "color:red", "el     : " + (this.$el)); //已被初始化
+            console.log(this.$el);
+            console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化  
+            console.log("%c%s", "color:red", "message: " + this.message); //已被初始化  
+        },
+        mounted: function() {
+            console.group('mounted 挂载结束状态===============》');
+            console.log("%c%s", "color:red", "el     : " + this.$el); //已被初始化
+            console.log(this.$el);
+            console.log("%c%s", "color:red", "data   : " + this.$data); //已被初始化
+            console.log("%c%s", "color:red", "message: " + this.message); //已被初始化 
+        },
+        beforeUpdate: function() {
+            console.group('beforeUpdate 更新前状态===============》');
+            console.log("%c%s", "color:red", "el     : " + this.$el);
+            console.log(this.$el);
+            console.log("%c%s", "color:red", "data   : " + this.$data);
+            console.log("%c%s", "color:red", "message: " + this.message);
+        },
+        updated: function() {
+            console.group('updated 更新完成状态===============》');
+            console.log("%c%s", "color:red", "el     : " + this.$el);
+            console.log(this.$el);
+            console.log("%c%s", "color:red", "data   : " + this.$data);
+            console.log("%c%s", "color:red", "message: " + this.message);
+        },
+        beforeDestroy: function() {
+            console.group('beforeDestroy 销毁前状态===============》');
+            console.log("%c%s", "color:red", "el     : " + this.$el);
+            console.log(this.$el);
+            console.log("%c%s", "color:red", "data   : " + this.$data);
+            console.log("%c%s", "color:red", "message: " + this.message);
+        },
+        destroyed: function() {
+            console.group('destroyed 销毁完成状态===============》');
+            console.log("%c%s", "color:red", "el     : " + this.$el);
+            console.log(this.$el);
+            console.log("%c%s", "color:red", "data   : " + this.$data);
+            console.log("%c%s", "color:red", "message: " + this.message)
+        }
+    })
+</script>
+```
+
+## 第十一节：使用Axios
+> 1. 通过cdn引入Axios的包：\<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+> 或者在cli下使用npm：$ npm install axios
+> 2. 在Vue实例挂载的时候进行请求
+
+```
+<div id="app">
+    <p>控制台查看本机位置信息</p>
+    <button @click="GetLocation">获取</button>
+</div>
+<script>
+    // 开发者 key=BPKBZ-UCICO-KTLWG-SP4TL-DF7TE-TMFDJ
+    // https://apis.map.qq.com/ws/location/v1/ip?ip=61.135.17.68&key=BPKBZ-UCICO-KTLWG-SP4TL-DF7TE-TMFDJ
+    var vm = new Vue({
+        el: '#app',
+        data: {
+            info: ''
+        },
+        methods: {
+            GetLocation() {
+                console.log(this.info)
+            }
+        },
+        mounted() {
+            axios
+            //这里会出错，因为访问api必须通过服务器进行，我们的demo是直接打开html格式文件，其实并没有架设本地服务器
+                .get('https://apis.map.qq.com/ws/location/v1/ip?ip=61.135.17.686&key=BPKBZ-UCICO-KTLWG-SP4TL-DF7TE-TMFDJ')
+                .then(response => (this.info = response))
+                .catch(function(error) { // 请求失败处理
+                    console.log(error);
+                });
+        }
     });
 </script>
 ```

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <component-a></component-a>
+        <!-- 组件复用因为data是个函数有很好的隔离性 -->
+        <component-a></component-a>
+    </div>
+    <script>
+        Vue.component('component-a', {
+            data() {
+                return {
+                    title: '组件A',
+                    num: 0
+                }
+            },
+            methods: {
+                CountAdd() {
+                    this.num += 1
+                }
+            },
+            template: `<div>
+                <p>hello{{title}}</p>
+                <button @click="CountAdd">num is {{num}}</button>
+            <div>` //template中直接写的话需要使用“ `` ”对html元素进行包裹。
+        })
+        var vm = new Vue({
+            el: '#app',
+            data: {},
+            methods: {}
+        });
+    </script>
+</body>
+
+
+</html>

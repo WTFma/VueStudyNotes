@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <style>
+        .mydiv {
+            width: 400px;
+            height: 220px;
+            background-color: #ee66ee;
+        }
+        
+        .red {
+            background-color: red;
+        }
+        
+        .myWidth {
+            width: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- 如果isShow为真 则class="red"否则class不做绑定 -->
+        <div class="mydiv" :class="{red:isShow}"></div>
+        <button @click="changeColor">点击变红</button>
+        <hr>
+        <!-- 通过计算属性绑定所需的对象给class -->
+        <div class="mydiv" :class="changeWC"></div>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                isShow: false
+            },
+            methods: {
+                changeColor() {
+                    this.isShow = !this.isShow
+                }
+            },
+            computed: {
+                changeWC() {
+                    return {
+                        red: this.isShow,
+                        myWidth: this.isShow
+                    }
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>

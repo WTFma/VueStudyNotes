@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang='en'>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/vue/2.6.11/vue.min.js"></script>
+    <style>
+        .mydiv {
+            height: 200px;
+            background-color: aqua;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <!-- comWidth使用的是computed绑定，另外使用的是一般的style对象绑定 -->
+        <div :style="[comWidth,{backgroundColor:newColor}]" class="mydiv"></div>
+        <hr> 改变宽度<input type="text" v-model="daWidth">(自动添加px单位)
+        <hr> 改变颜色
+        <input type="text" v-model="newColor">
+    </div>
+    <script>
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                daWidth: 120,
+                newColor: '#0066ee'
+            },
+            methods: {
+                changeWidth() {
+                    console.log(this.daWidth)
+                }
+            },
+            computed: {
+                comWidth: function() {
+                    return {
+                        width: this.daWidth + 'px'
+                    }
+                }
+            },
+        });
+    </script>
+</body>
+
+</html>
