@@ -1044,3 +1044,37 @@ $\color{#ee6600}{知识扩展}$：单向传递是为了防止从子组件意外�
     });
 </script>
 ```
+
+### 跨域问题
+#### 1. 什么是跨域
+跨域，指的是浏览器不能执行其他网站的脚本。它是由浏览器的同源策略造成的，是浏览器对JavaScript施加的安全限制。
+#### 2. 什么是同源
+同源指的是： $\color{#ee6600}{域名、协议、端口} $相同
+> - https://www.douyu.com ==> https://www.huya.com ----- 跨域
+> - https://www.douyu.com ==> https://www.douyu.com ----- 非跨域
+> - https://www.douyu.com ==> https://www.douyu.com:8080 ----- 跨域
+> - https://www.douyu.com ==> http://www.douyu.com ----- 跨域
+
+
+#### 3. 如何解决跨域
+1. 使用CORS（跨资源共享）解决跨域问题
+> CORS是一个W3C标准，全称-“跨域资源共享”（Cross-Orign resource sharing）。它允许浏览器向跨源服务器，发出XMLHttpRequest请求，从而克服了AJAX只能同源使用的限制。
+> Cors需要浏览器和服务器同时支持。目前所有浏览器都支持该功能，IE浏览器不能低于IE10。整个CORS通信过程，浏览器自实现。对于开发者而言，CORS通信与同源的AJAX通信没有差别。浏览器一旦发现AJAX请求跨域，就会自动添加一些附加头信息，有时还会多出一次附加的请求，用户无感觉。
+> 所以说，实现CORS的关键在于服务器实现CORS接口。 
+
+2. 使用JSONP解决跨域问题
+> JSONP(JSON with Padding)是JSON的一种“使用模式”，可用于解决主流浏览器的跨域数据访问的问题。由于是同源策略，一般来说位于```server1.example.com```的网页无法与```server2.example.com```的服务器沟通，而HTML的```<script>```元素是一个例外。利用```<script>```元素的开放策略，网页可以得到从其它来源动态产生的JSON资料，而这种使用模式就是所谓的JSONP。用JSONP抓到的资料并不是JSON，而是任意的JavaScript，用JavaScript直译器执行而不是用JSONP 解析器解析。
+
+3. CORS和JSONP的比较
+CORS和JSONP的使用目的相同，但是CORS比JSONP更强大。
+JSONP只支持GET请求，CORS支持所有类型的HTTP请求。JSONP的优势在于支持老式浏览器，以及可以向不支持CORS的网站请求数据。
+
+4. 使用Nginx反向代理解决跨域问题
+以上跨域问题的解决方案都需要浏览器支持，当服务器无法设置```header```或提供```callback```时我们可以采取Nginx反向代理的方式解决跨域。
+配置实例：在```Nginx.conf```的```location```中增加如下配置：
+>  ```add_header Access-Control-Allow-Origin * 或域名 ```
+> ```add_header Access-Control-Allow-Headers X-Requested-With; ```
+> ```add_header Access-Control-Allow-Methods GET,POST,OPTIONS; ```
+
+
+
